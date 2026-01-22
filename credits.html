@@ -1,0 +1,228 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Crew | AstroROM</title>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600&family=Orbitron:wght@700&display=swap" rel="stylesheet">
+    <style>
+        :root { 
+            --bg: #03050a; 
+            --card-bg: rgba(255,255,255,0.05);
+            --text: #ffffff;
+            --neon: #a855f7; 
+            --terminal-green: #00ff41;
+            --border: rgba(255,255,255,0.1);
+        }
+
+        [data-theme="light"] {
+            --bg: #f0f2f5;
+            --card-bg: rgba(255,255,255,0.6);
+            --text: #1a1a1a;
+            --border: rgba(0,0,0,0.1);
+            --neon: #7c3aed; 
+        }
+
+        body { 
+            background: var(--bg); color: var(--text); 
+            font-family: 'Plus Jakarta Sans', sans-serif; margin: 0; 
+            transition: background 0.3s, color 0.3s;
+        }
+
+        header { 
+            display: flex; justify-content: space-between; align-items: center;
+            padding: 20px 10%; backdrop-filter: blur(10px); 
+            border-bottom: 1px solid var(--border);
+        }
+
+        .nav-links a { 
+            color: var(--text); text-decoration: none; margin-left: 20px; 
+            font-weight: 600; font-size: 0.85rem; transition: color 0.3s;
+        }
+        .nav-links a:hover { color: var(--neon); }
+
+        .theme-toggle {
+            cursor: pointer; font-size: 1.2rem; background: none; border: none; 
+            color: var(--text); margin-left: 20px; transition: 0.3s;
+        }
+        .theme-toggle:hover { transform: rotate(15deg); color: var(--neon); }
+
+        .container { max-width: 900px; margin: 60px auto; padding: 0 20px; text-align: center; }
+        
+        .crew-grid { 
+            display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); 
+            gap: 25px; margin-top: 40px; 
+        }
+
+        /* Liquid Cursor Lift Effect */
+        .dev-item { 
+            background: var(--card-bg); padding: 35px; border-radius: 20px; cursor: pointer;
+            backdrop-filter: blur(15px); border: 1px solid var(--border); 
+            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            display: flex; flex-direction: column; align-items: center;
+        }
+        .dev-item:hover { 
+            border-color: var(--neon); 
+            background: rgba(168, 85, 247, 0.1); 
+            transform: translateY(-10px) scale(1.03); 
+            box-shadow: 0 10px 30px rgba(168, 85, 247, 0.15); 
+        }
+        
+        .role-badge {
+            margin-top: 10px; font-size: 0.75rem; opacity: 0.6; 
+            font-family: 'Orbitron'; letter-spacing: 1px;
+        }
+
+        /* Smooth Popping Modal */
+        #modal-overlay {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0, 0, 0, 0.85); backdrop-filter: blur(15px);
+            display: none; justify-content: center; align-items: center; z-index: 1000;
+            opacity: 0; transition: 0.4s ease;
+        }
+        .floating-card {
+            background: #0a0a0a; 
+            border: 1px solid var(--neon); border-radius: 20px;
+            padding: 0; width: 90%; max-width: 450px; text-align: left;
+            transform: scale(0.7) translateY(50px); 
+            transition: all 0.5s cubic-bezier(0.34, 1.56, 0.64, 1);
+            overflow: hidden;
+            box-shadow: 0 0 50px rgba(168, 85, 247, 0.2);
+        }
+        
+        .terminal-header {
+            background: #1a1a1a; padding: 10px 15px; border-bottom: 1px solid #333;
+            display: flex; gap: 8px; align-items: center;
+        }
+        .dot { width: 10px; height: 10px; border-radius: 50%; }
+        .red { background: #ff5f56; } .yellow { background: #ffbd2e; } .green { background: #27c93f; }
+
+        .terminal-body {
+            padding: 25px;
+            font-family: 'Consolas', 'Monaco', monospace;
+            color: var(--terminal-green);
+            font-size: 0.9rem;
+            line-height: 1.6;
+            min-height: 150px;
+        }
+
+        .cursor {
+            display: inline-block; width: 8px; height: 15px; 
+            background: var(--terminal-green); vertical-align: middle;
+            animation: blink 1s step-end infinite;
+        }
+        @keyframes blink { 50% { opacity: 0; } }
+
+        #modal-overlay.active { display: flex; opacity: 1; }
+        #modal-overlay.active .floating-card { transform: scale(1) translateY(0); }
+
+        .close-btn {
+            width: 100%; background: #1a1a1a; border: none; border-top: 1px solid #333;
+            color: white; padding: 15px; cursor: pointer; font-family: 'Orbitron';
+            transition: 0.2s;
+        }
+        .close-btn:hover { background: var(--neon); }
+    </style>
+</head>
+<body>
+
+    <header>
+        <div style="font-family: 'Orbitron'; font-size: 1.2rem;">ASTRO<span style="color: var(--neon);">ROM</span></div>
+        <nav class="nav-links">
+            <a href="index.html">HOME</a>
+            <a href="links.html">ACCESS</a>
+            <a href="credits.html" style="color: var(--neon);">CREW</a>
+            <button class="theme-toggle" onclick="toggleTheme()" id="themeBtn">🌓</button>
+        </nav>
+    </header>
+
+    <div class="container">
+        <h2 style="font-family: 'Orbitron'; letter-spacing: 2px;">COMMAND <span style="color:var(--neon)">CENTER</span></h2>
+        
+        <div class="crew-grid">
+            <div class="dev-item" onclick="openModal('SameerAlShahab', 'Crew Leader / Main Dev', 'Architecture, Core System, Stability')">
+                <strong style="font-size: 1.1rem;">SameerAlShahab</strong>
+                <span class="role-badge" style="color: var(--neon);">COMMANDER</span>
+            </div>
+
+            <div class="dev-item" onclick="openModal('Yacinegti', 'Crew Wing', 'S21/S20 Maintainer Dev & Site Creator')">
+                <strong style="font-size: 1.1rem;">Yacinegti</strong>
+                <span class="role-badge" style="color: #ff5f56;">VANGUARD</span>
+            </div>
+
+            <div class="dev-item" onclick="openModal('mecyanned', 'Main Helper / Tester', 'Partial Dev & Quality Assurance')">
+                <strong style="font-size: 1.1rem;">mecyanned</strong>
+                <span class="role-badge" style="color: #4ade80;">OPERATOR</span>
+            </div>
+        </div>
+    </div>
+
+    <div id="modal-overlay" onclick="closeModal()">
+        <div class="floating-card" onclick="event.stopPropagation()">
+            <div class="terminal-header">
+                <div class="dot red" onclick="closeModal()"></div>
+                <div class="dot yellow"></div>
+                <div class="dot green"></div>
+                <span style="margin-left: 10px; font-family: sans-serif; font-size: 12px; color: #666; font-weight: bold;">bash --login</span>
+            </div>
+            
+            <div class="terminal-body">
+                <span id="typewriter-text"></span><span class="cursor"></span>
+            </div>
+
+            <button class="close-btn" onclick="closeModal()">TERMINATE SESSION</button>
+        </div>
+    </div>
+
+    <script>
+        const html = document.documentElement;
+        const themeBtn = document.getElementById('themeBtn');
+        let isDark = true;
+
+        function toggleTheme() {
+            isDark = !isDark;
+            html.setAttribute('data-theme', isDark ? 'dark' : 'light');
+            themeBtn.innerText = isDark ? '🌓' : '☀️';
+        }
+
+        let typeInterval;
+        
+        function openModal(name, role, desc) {
+            const overlay = document.getElementById('modal-overlay');
+            const textElement = document.getElementById('typewriter-text');
+            
+            textElement.innerHTML = '';
+            
+            overlay.style.display = 'flex';
+            setTimeout(() => overlay.classList.add('active'), 10);
+
+            const fullText = `> CONNECTING TO SECURE SERVER...\n> AUTHENTICATED.\n\n> TARGET: ${name}\n> RANK:   ${role}\n> TASKS:  ${desc}\n\n> WAITING FOR INPUT...`;
+
+            let i = 0;
+            clearTimeout(typeInterval);
+
+            function typeChar() {
+                if (i < fullText.length) {
+                    const char = fullText.charAt(i);
+                    if (char === '\n') {
+                        textElement.innerHTML += '<br>';
+                    } else {
+                        textElement.innerHTML += char;
+                    }
+                    i++;
+                    const speed = Math.random() * 30 + 20; 
+                    typeInterval = setTimeout(typeChar, speed);
+                }
+            }
+            setTimeout(typeChar, 300);
+        }
+
+        function closeModal() {
+            const overlay = document.getElementById('modal-overlay');
+            overlay.classList.remove('active');
+            clearTimeout(typeInterval);
+            setTimeout(() => overlay.style.display = 'none', 400);
+        }
+    </script>
+</body>
+</html>
